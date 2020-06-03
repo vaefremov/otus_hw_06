@@ -66,16 +66,16 @@ class Matrix
 
     Matrix() = default;
     ~Matrix() = default;
-    T& get(size_t i, size_t j) 
+    T const& get(size_t i, size_t j) const
     {
         auto it = m_map.find(std::pair(i,j));
         if(it == m_map.end())
-            return m_default;
-        else
         {
-            return m_map[std::pair(i,j)];
+            return m_default;
         }
+        return it->second;
     }
+    
     void put(size_t i, size_t j, T val)
     {
         if(val == m_default)
