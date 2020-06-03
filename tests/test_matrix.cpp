@@ -17,6 +17,18 @@ TEST(matrix, assign)
     OTUS::Matrix<int, default_val> m;
     m[100][100] = 314;
     ASSERT_EQ(1, m.size());
+    int val = m[100][100];
+    ASSERT_EQ(314, val);
+}
+
+TEST(matrix, long)
+{
+    const int default_val = -1;
+    OTUS::Matrix<long, default_val> m;
+    m[100][100] = 314;
+    ASSERT_EQ(1, m.size());
+    int val = m[100][100];
+    ASSERT_EQ(314, val);
 }
 
 TEST(matrix, assign_advanced)

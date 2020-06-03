@@ -2,7 +2,6 @@
 #include <map>
 #include <tuple>
 
-
 namespace OTUS
 {
 
@@ -14,12 +13,12 @@ class Matrix
     struct helper_2nd_index
     {
         helper_2nd_index(Matrix& m, size_t i, size_t j): m_m(m), m_i(i), m_j(j) {}
-        helper_2nd_index& operator= (int val) 
+        helper_2nd_index& operator= (T val) 
         {
             m_m.put(m_i, m_j, val);
             return *this;
         }
-        operator int()
+        operator T()
         {
             return m_m.get(m_i, m_j);
         }
@@ -42,14 +41,14 @@ class Matrix
     class m_iterator
     {
         public:
-            using map_iterator_t = std::map<std::pair<size_t, size_t>, int>::iterator;
+            using map_iterator_t = typename std::map<std::pair<size_t, size_t>, T>::iterator;
             m_iterator(map_iterator_t it): m_mit(it) {}
             m_iterator& operator++()
             {
                 m_mit++;
                 return *this;
             }
-            std::tuple<size_t, size_t, int> operator*()
+            std::tuple<size_t, size_t, T> operator*()
             {
                 return std::make_tuple(m_mit->first.first, m_mit->first.second, m_mit->second);
             }
@@ -67,7 +66,7 @@ class Matrix
 
     Matrix() = default;
     ~Matrix() = default;
-    int& get(size_t i, size_t j) 
+    T& get(size_t i, size_t j) 
     {
         auto it = m_map.find(std::pair(i,j));
         if(it == m_map.end())
@@ -77,7 +76,7 @@ class Matrix
             return m_map[std::pair(i,j)];
         }
     }
-    void put(size_t i, size_t j, int val)
+    void put(size_t i, size_t j, T val)
     {
         if(val == m_default)
         {
@@ -105,8 +104,8 @@ class Matrix
     }
     private:
 
-    std::map<std::pair<size_t, size_t>, int> m_map;
-    int m_default = DEF;
+    std::map<std::pair<size_t, size_t>, T> m_map;
+    T m_default = DEF;
 };
 
 }
