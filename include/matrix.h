@@ -5,7 +5,7 @@
 namespace OTUS
 {
 
-template<typename T, int DEF>
+template<typename T, T DEF>
 class Matrix
 {
     public:
