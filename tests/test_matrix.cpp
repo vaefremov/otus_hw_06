@@ -67,7 +67,7 @@ TEST(matrix, iterators)
 
     for(auto  e: m)
     {
-        auto [i, j, v] = e;
+        auto [i, v] = e;
         if(v == val1)
             seen1 = true;
         if(v == val2)
@@ -76,3 +76,14 @@ TEST(matrix, iterators)
     ASSERT_TRUE(seen1 && seen2);
 }
 
+// Creating 3D matrix
+TEST(matrix, higher_dim)
+{
+    const int default_val = -1;
+    OTUS::Matrix<int, default_val, 3> m;
+    ASSERT_EQ(0, m.size());
+    m[100][100][100] = 314;
+    ASSERT_EQ(1, m.size());
+    m[100][100][100] = default_val;
+    ASSERT_EQ(0, m.size());
+}

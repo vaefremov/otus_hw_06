@@ -1,56 +1,63 @@
 #pragma once
 #include <map>
-#include <tuple>
+#include <array>
 
 namespace OTUS
 {
 
-template<typename T, T DEF>
+template<typename T, T DEF, size_t N_DIM = 2>
 class Matrix
 {
     public:
 
-    struct helper_2nd_index
+    template<size_t DIM>
+    struct helper_index
     {
-        helper_2nd_index(Matrix& m, size_t i, size_t j): m_m(m), m_i(i), m_j(j) {}
-        helper_2nd_index& operator= (T val) 
+        helper_index(Matrix& m, std::array<size_t, DIM> ind): m_m{m}, m_ind(ind) {}
+        helper_index<DIM+1> operator[](size_t j)
         {
-            m_m.put(m_i, m_j, val);
+            std::array<size_t, DIM+1> ind_next;
+            for (size_t i = 0; i < DIM; i++)
+            {
+                ind_next[i] = m_ind[i];
+            }
+            ind_next[DIM] = j;
+            return helper_index<DIM+1>(m_m, ind_next);
+        }
+        Matrix& m_m;
+        std::array<size_t, DIM> m_ind;
+    };
+
+    template<>
+    struct helper_index<N_DIM>
+    {
+        helper_index(Matrix& m, std::array<size_t, N_DIM> ind): m_m{m}, m_ind{ind} {}
+        helper_index<N_DIM>& operator= (T val) 
+        {
+            m_m.put(val, m_ind);
             return *this;
         }
         operator T()
         {
-            return m_m.get(m_i, m_j);
+            return m_m.get(m_ind);
         }
         Matrix& m_m;
-        size_t m_i;
-        size_t m_j;
-    };
-
-    struct helper_1st_index
-    {
-        helper_1st_index(Matrix& m, size_t i): m_m(m), m_i(i) {}
-        helper_2nd_index operator[](size_t j)
-        {
-            return helper_2nd_index(m_m, m_i, j);
-        }
-        Matrix& m_m;
-        size_t m_i;
+        std::array<size_t, N_DIM> m_ind;
     };
 
     class m_iterator
     {
         public:
-            using map_iterator_t = typename std::map<std::pair<size_t, size_t>, T>::iterator;
+            using map_iterator_t = typename std::map<std::array<size_t, N_DIM>, T>::iterator;
             m_iterator(map_iterator_t it): m_mit(it) {}
             m_iterator& operator++()
             {
                 m_mit++;
                 return *this;
             }
-            std::tuple<size_t, size_t, T> operator*()
+            auto operator*()
             {
-                return std::make_tuple(m_mit->first.first, m_mit->first.second, m_mit->second);
+                return *m_mit;
             }
             bool operator==(m_iterator const& other)
             {
@@ -66,9 +73,9 @@ class Matrix
 
     Matrix() = default;
     ~Matrix() = default;
-    T const& get(size_t i, size_t j) const
+    T const& get(std::array<size_t, N_DIM> ind) const
     {
-        auto it = m_map.find(std::pair(i,j));
+        auto it = m_map.find(ind);
         if(it == m_map.end())
         {
             return m_default;
@@ -76,19 +83,21 @@ class Matrix
         return it->second;
     }
     
-    void put(size_t i, size_t j, T val)
+    void put(T val, std::array<size_t, N_DIM> ind)
     {
         if(val == m_default)
         {
-            m_map.erase(std::pair(i,j));
+            m_map.erase(ind);
             return;
         }
-        m_map[std::pair(i,j)] = val;
+        m_map[ind] = val;
     }
 
-    helper_1st_index operator[](size_t i)
-    {
-        return helper_1st_index(*this, i);
+    helper_index<1> operator[](size_t i)
+    {   
+        std::array<size_t, 1> ind;
+        ind[0] = i;
+        return helper_index<1>(*this, ind);
     }
     size_t size()
     {
@@ -104,7 +113,8 @@ class Matrix
     }
     private:
 
-    std::map<std::pair<size_t, size_t>, T> m_map;
+    std::map<std::array<size_t, N_DIM>, T> m_map;
+    
     T m_default = DEF;
 };
 

@@ -1,5 +1,18 @@
 #include <iostream>
+#include <ostream>
+
 #include "matrix.h"
+
+template<size_t N>
+std::ostream& operator<<(std::ostream& out, std::array<size_t, N> const& ar)
+{
+    for (size_t i = 0; i < N; i++)
+    {
+        out << ar[i] << " ";
+    }
+    
+    return out;
+}
 
 int main() {
     OTUS::Matrix<int, 0> matrix;
@@ -29,8 +42,8 @@ int main() {
     std::cout << "Content:" << std::endl;
     for(auto elem: matrix)
     {
-        auto [i, j, value] = elem;
-        std::cout << "matrix[" << i << "][" << j << "] = " << value << std::endl;
+        auto [i, value] = elem;
+        std::cout << "matrix[" << i << "] = " << value << std::endl;
     }
 
     // The following expression is valid:
