@@ -49,20 +49,25 @@ class Matrix
     {
         public:
             using map_iterator_t = typename std::map<std::array<size_t, N_DIM>, T>::iterator;
+
             m_iterator(map_iterator_t it): m_mit(it) {}
-            m_iterator& operator++()
+            
+            auto& operator++()
             {
                 m_mit++;
                 return *this;
             }
+            
             auto operator*()
             {
                 return *m_mit;
             }
+            
             bool operator==(m_iterator const& other)
             {
                 return m_mit == other.m_mit;
             }
+            
             bool operator!=(m_iterator const& other)
             {
                 return m_mit != other.m_mit;
@@ -73,7 +78,8 @@ class Matrix
 
     Matrix() = default;
     ~Matrix() = default;
-    T const& get(std::array<size_t, N_DIM> ind) const
+
+    T const& get(std::array<size_t, N_DIM> const& ind) const
     {
         auto it = m_map.find(ind);
         if(it == m_map.end())
@@ -83,7 +89,7 @@ class Matrix
         return it->second;
     }
     
-    void put(T val, std::array<size_t, N_DIM> ind)
+    void put(T val, std::array<size_t, N_DIM> const& ind)
     {
         if(val == m_default)
         {
