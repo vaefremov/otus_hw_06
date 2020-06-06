@@ -87,3 +87,18 @@ TEST(matrix, higher_dim)
     m[100][100][100] = default_val;
     ASSERT_EQ(0, m.size());
 }
+
+// Creating 1D matrix
+TEST(matrix, dim_1)
+{
+    const int default_val = -1;
+    OTUS::Matrix<int, default_val, 1> m;
+    ASSERT_EQ(0, m.size());
+    int exp_val = 314;
+    m[100] = exp_val;
+    ASSERT_EQ(1, m.size());
+    int val = m[100];
+    ASSERT_EQ(exp_val, val);
+    m[100] = default_val;
+    ASSERT_EQ(0, m.size());
+}
