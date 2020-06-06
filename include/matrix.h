@@ -1,7 +1,6 @@
 #pragma once
 #include <map>
 #include <array>
-#include <iostream>
 
 namespace OTUS
 {
@@ -17,11 +16,6 @@ class Matrix
         helper_index(Matrix& m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind(ind) {}
         helper_index<DIM+1> operator[](size_t j)
         {
-            // std::array<size_t, DIM+1> ind_next;
-            // for (size_t i = 0; i < DIM; i++)
-            // {
-            //     ind_next[i] = m_ind[i];
-            // }
             m_ind[DIM] = j;
             return helper_index<DIM+1>(m_m, m_ind);
         }
@@ -35,7 +29,6 @@ class Matrix
         helper_index(Matrix& m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind{ind} {}
         helper_index<N_DIM>& operator= (T val) 
         {
-            std::cout << "ijv " << m_ind[0] << " " << m_ind[1] << " " << val << std::endl;
             m_m.put(val, m_ind);
             return *this;
         }
@@ -103,9 +96,7 @@ class Matrix
 
     helper_index<1> operator[](size_t i)
     {   
-        // std::array<size_t, N_DIM> ind;
-        // ind[0] = i;
-        m_cur_index[0] = 1;
+        m_cur_index[0] = i;
         return helper_index<1>(*this, m_cur_index);
     }
     size_t size()
