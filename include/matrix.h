@@ -6,39 +6,44 @@ namespace OTUS
 {
 
 template<typename T, T DEF, size_t N_DIM = 2>
+class Matrix;
+
+template<typename T, T DEF, size_t N_DIM, size_t DIM>
+struct helper_index
+{
+    helper_index(Matrix<T, DEF, N_DIM>* m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind(ind) {}
+    helper_index<T, DEF, N_DIM, DIM+1> operator[](size_t j)
+    {
+        m_ind[DIM] = j;
+        return helper_index<T, DEF, N_DIM, DIM+1>(m_m, m_ind);
+    }
+    Matrix<T, DEF, N_DIM>* m_m;
+    std::array<size_t, N_DIM>& m_ind;
+};
+
+template<typename T, T DEF, size_t N_DIM>
+struct helper_index<T, DEF, N_DIM, N_DIM>
+{
+    helper_index(Matrix<T, DEF, N_DIM>* m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind{ind} {}
+    helper_index<T, DEF, N_DIM, N_DIM>& operator= (T val) 
+    {
+        m_m->put(val, m_ind);
+        return *this;
+    }
+    operator T()
+    {
+        return m_m->get(m_ind);
+    }
+    Matrix<T, DEF, N_DIM>* m_m;
+    std::array<size_t, N_DIM>& m_ind;
+};
+
+
+template<typename T, T DEF, size_t N_DIM >
 class Matrix
 {
     public:
 
-    template<size_t DIM>
-    struct helper_index
-    {
-        helper_index(Matrix& m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind(ind) {}
-        helper_index<DIM+1> operator[](size_t j)
-        {
-            m_ind[DIM] = j;
-            return helper_index<DIM+1>(m_m, m_ind);
-        }
-        Matrix& m_m;
-        std::array<size_t, N_DIM>& m_ind;
-    };
-
-    template<>
-    struct helper_index<N_DIM>
-    {
-        helper_index(Matrix& m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind{ind} {}
-        helper_index<N_DIM>& operator= (T val) 
-        {
-            m_m.put(val, m_ind);
-            return *this;
-        }
-        operator T()
-        {
-            return m_m.get(m_ind);
-        }
-        Matrix& m_m;
-        std::array<size_t, N_DIM>& m_ind;
-    };
 
     class m_iterator
     {
@@ -94,10 +99,10 @@ class Matrix
         m_map[ind] = val;
     }
 
-    helper_index<1> operator[](size_t i)
+    helper_index<T, DEF, N_DIM, 1> operator[](size_t i)
     {   
         m_cur_index[0] = i;
-        return helper_index<1>(*this, m_cur_index);
+        return helper_index<T, DEF, N_DIM, 1>(this, m_cur_index);
     }
     size_t size()
     {
