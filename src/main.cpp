@@ -8,7 +8,9 @@ std::ostream& operator<<(std::ostream& out, std::array<size_t, N> const& ar)
 {
     for (size_t i = 0; i < N; i++)
     {
-        out << ar[i] << " ";
+        out << ar[i];
+        if(i+1 != N)
+            out << ",";
     }
     
     return out;
