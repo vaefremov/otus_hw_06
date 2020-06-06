@@ -50,5 +50,11 @@ int main() {
 
     // The following expression is valid:
     ((matrix[100][100] = 314) = 0) = 217;
+
+    // Higher dimensions are supported as well
+    OTUS::Matrix<int, 0, 4> m4;
+    m4[1][2][3][4] = 42;
+    if(m4[1][2][3][4] != 42)
+        throw "Something wrong with higher dimensions!";
     return 0;
 }
