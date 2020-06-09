@@ -108,13 +108,10 @@ TEST(matrix, indexes_interdependency)
     OTUS::Matrix<int, 0, 2> matrix;
     int expected = 42;
     auto row = matrix[10];
-    // auto row1 = row;
     row[10] = expected;
     int actual = row[10];
     ASSERT_EQ(expected, actual);
-    // std::cout << "[10][10] = " << row[10] << std::endl;
     matrix[5][5] = 24;
     actual = row[10];
     ASSERT_EQ(expected, actual);
-    // std::cout << "[10][10] = " << row[10] << std::endl;
 }
