@@ -68,27 +68,27 @@ class Matrix
     class m_iterator
     {
         public:
-            using map_iterator_t = typename std::map<std::array<size_t, N_DIM>, T>::iterator;
+            using map_iterator_t = typename std::map<std::array<size_t, N_DIM>, T>::const_iterator;
 
-            m_iterator(map_iterator_t it): m_mit(it) {}
+            m_iterator(map_iterator_t it): m_mit{it} {}
             
-            auto& operator++()
+            auto const& operator++()
             {
                 m_mit++;
                 return *this;
             }
             
-            auto operator*()
+            auto operator*() const
             {
                 return *m_mit;
             }
             
-            bool operator==(m_iterator const& other)
+            bool operator==(m_iterator const& other) const
             {
                 return m_mit == other.m_mit;
             }
             
-            bool operator!=(m_iterator const& other)
+            bool operator!=(m_iterator const& other) const
             {
                 return m_mit != other.m_mit;
             }
@@ -125,17 +125,17 @@ class Matrix
         cur_index[0] = i;
         return helper_index<T, DEF, N_DIM, 1>(this, cur_index);
     }
-    size_t size()
+    size_t size() const
     {
         return m_map.size();
     }
-    m_iterator begin()
+    m_iterator begin() const
     {
-        return m_iterator(m_map.begin());
+        return m_iterator(m_map.cbegin());
     }
-    m_iterator end()
+    m_iterator end() const
     {
-        return m_iterator(m_map.end());
+        return m_iterator(m_map.cend());
     }
     private:
 
