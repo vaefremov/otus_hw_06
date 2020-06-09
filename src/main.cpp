@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& out, std::array<size_t, N> const& ar)
 }
 
 template<typename T, T Def = T{}, size_t N = 2>
-void printMatrix(const OTUS::Matrix<T, Def, N>& matrix) {
+void printMatrix(OTUS::Matrix<T, Def, N> const& matrix) {
     for(auto elem: matrix)
     {
         auto [i, value] = elem;
