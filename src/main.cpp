@@ -51,11 +51,6 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "Content:" << std::endl;
-    // for(auto elem: matrix)
-    // {
-    //     auto [i, value] = elem;
-    //     std::cout << "matrix[" << i << "] = " << value << std::endl;
-    // }
     printMatrix(matrix);
     // The following expression is valid:
     ((matrix[100][100] = 314) = 0) = 217;
