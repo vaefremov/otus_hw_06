@@ -8,23 +8,43 @@ namespace OTUS
 template<typename T, T DEF, size_t N_DIM = 2>
 class Matrix;
 
+
 template<typename T, T DEF, size_t N_DIM, size_t DIM>
-struct helper_index
+struct helper_index 
 {
-    helper_index(Matrix<T, DEF, N_DIM>* m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind(ind) {}
+    helper_index(Matrix<T, DEF, N_DIM>* m, std::array<size_t, DIM>& ind): m_m{m}
+    {
+        std::copy(std::begin(ind), std::end(ind), std::begin(m_ind));
+    }
+    helper_index() = delete;
+    helper_index(helper_index const&) = delete;
+    helper_index(helper_index &&) = delete;
+    helper_index& operator=(helper_index& other) = delete;
     helper_index<T, DEF, N_DIM, DIM+1> operator[](size_t j)
     {
         m_ind[DIM] = j;
         return helper_index<T, DEF, N_DIM, DIM+1>(m_m, m_ind);
     }
     Matrix<T, DEF, N_DIM>* m_m;
-    std::array<size_t, N_DIM>& m_ind;
+    /**
+     * Partially-built set of indices.
+     * 
+     * Alternatively, we may keep the only copy of index set in the main object (i.e. Matrix)
+     * and pass only the references to this global object. However, this design leads to strange
+     * effects (see the matrix/indexes_interdependency test, this strange behaviour was mentionned
+     * by Sergey Koltsov in his review).
+     */
+    std::array<size_t, DIM+1> m_ind;
 };
 
 template<typename T, T DEF, size_t N_DIM>
-struct helper_index<T, DEF, N_DIM, N_DIM>
+struct helper_index<T, DEF, N_DIM, N_DIM> 
 {
     helper_index(Matrix<T, DEF, N_DIM>* m, std::array<size_t, N_DIM>& ind): m_m{m}, m_ind{ind} {}
+    helper_index() = delete;
+    helper_index(helper_index const&) = delete;
+    helper_index(helper_index &&) = delete;
+    helper_index& operator=(helper_index& other) = delete;
     helper_index<T, DEF, N_DIM, N_DIM>& operator= (T val) 
     {
         m_m->put(val, m_ind);
@@ -35,7 +55,7 @@ struct helper_index<T, DEF, N_DIM, N_DIM>
         return m_m->get(m_ind);
     }
     Matrix<T, DEF, N_DIM>* m_m;
-    std::array<size_t, N_DIM>& m_ind;
+    std::array<size_t, N_DIM> m_ind;
 };
 
 
@@ -101,8 +121,9 @@ class Matrix
 
     helper_index<T, DEF, N_DIM, 1> operator[](size_t i)
     {   
-        m_cur_index[0] = i;
-        return helper_index<T, DEF, N_DIM, 1>(this, m_cur_index);
+        std::array<size_t, 1> cur_index;
+        cur_index[0] = i;
+        return helper_index<T, DEF, N_DIM, 1>(this, cur_index);
     }
     size_t size()
     {
@@ -121,7 +142,6 @@ class Matrix
     std::map<std::array<size_t, N_DIM>, T> m_map;
     
     T m_default = DEF;
-    std::array<size_t, N_DIM> m_cur_index;
 };
 
 }
